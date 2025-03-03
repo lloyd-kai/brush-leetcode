@@ -6,7 +6,12 @@
 //以下调用不同算法题对应的solution类或者是测试函数，具体实现见对应的头文件。
 int main()
 {
+	//变量未初始化的演示
+	//int a;
+	//printf("%d", a);
 
+	//测试静态数组
+	Test_StaticArray();
 
 
 	return 0;
