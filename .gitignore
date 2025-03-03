@@ -35,3 +35,24 @@
 *.layout
 *.dev
 *.win
+
+# VS部分文件的排除
+
+# 要排除的文件 排除.文件防止隐私泄露 这里是一般常用的忽略文件
+# x64是vs相关的debug和执行文件，是源代码生成的，不用上传
+*.jpg
+# 斜杠表示忽略匹配的文件夹下的所有内容
+.git/
+.vs/
+x64/
+.atom/
+.idea/
+.fleet/
+*.iml
+*.ipr
+*.iws
+*.sln
+*.swp
+*.user
+*.filters
+*.vcxproj
