@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <stdexcept>
 using namespace std;
 
 //力扣上的单链表节点定义如下
@@ -158,3 +159,13 @@ void Test_LinkList(void)
 		cout << p->val << endl;
 	}
 }
+
+
+//单链表的模拟实现
+template<typename E>
+class MyLinkedList2
+{
+private:
+	//节点结构
+
+};

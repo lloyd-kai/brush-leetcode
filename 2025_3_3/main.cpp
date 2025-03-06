@@ -45,7 +45,12 @@ int main()
 
     //------------------------------------
     //测试双链表
-    Test_DoublyLinkList();
+    //Test_DoublyLinkList();
+
+
+    //-----------------------------------
+    //测试自己实现的双链表
+    Test_MyLinkedList();
 
 
 
