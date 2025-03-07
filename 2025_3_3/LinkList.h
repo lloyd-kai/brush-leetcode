@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <cstring>
+#include <string>
 #include <vector>
 #include <stdexcept>
 using namespace std;
@@ -167,5 +168,250 @@ class MyLinkedList2
 {
 private:
 	//节点结构
+	struct Node
+	{
+		E val;
+		Node* next;
+
+		Node(E value) :val(value), next(nullptr) {}
+	};
+
+	//这里的头节点是虚拟头节点
+	Node* head;
+	//实际的尾部节点引用
+	Node* tail;
+	int size_;
+
+public:
+	//构造函数
+	MyLinkedList2()
+	{
+		head = new Node(E());
+		tail = head;
+		size_ = 0;
+	}
+
+
+	//头部添加节点
+	void addFirst(E e)
+	{
+		Node* newNode = new Node(e);
+		newNode->next = head->next;
+		head->next = newNode;
+		if (size_ == 0)
+		{
+			tail = newNode;
+		}
+		size_++;
+	}
+
+	//尾部添加节点
+	void addLast(E e)
+	{
+		Node* newNode = new Node(e);
+		tail->next = newNode;
+		tail = newNode;
+		size_++;
+	}
+
+	//在链表中间添加节点
+	void add(int index, E e)
+	{
+		checkPositionIndex(index);
+
+		if (index == size_)
+		{
+			addLast(e);
+		}
+
+		Node* prev = head;
+		for (int i = 0; i < index; i++)
+		{
+			prev = prev->next;
+		}
+		Node* newNode = new Node(e);
+		newNode->next = prev->next;
+		prev->next = newNode;
+		size_++;
+	}
+
+	E removeFirst()
+	{
+		if (isEmpty())
+		{
+			throw std::out_of_range("No elements to remove");
+		}
+
+		Node* first = head->next;
+		head->next = first->next;
+		if (size_ == 1)
+		{
+			tail = head;
+		}
+		size_--;
+		E val = first->val;
+		delete first;
+		return val;
+	}
+
+	E removeLast()
+	{
+		if (isEmpty())
+		{
+			throw std::out_of_range("No elements to remove");
+		}
+
+		Node* prev = head->next;
+		//这里虽然能直接找到最后一个元素,也就是tail所指向的指针，但是需要返回被删除的元素，也就是还需要重新遍历一次
+		while (prev->next != tail)
+		{
+			prev = prev->next;
+		}
+
+		E val = tail->val;
+		delete tail;
+		prev->next = nullptr;
+		tail = prev;
+		size_--;
+		return val;
+	}
+
+	//删除链表中间的元素
+	E remove(int index)
+	{
+		checkElementIndex(index);
+
+		Node* prev = head;
+		for (int i = 0; i < index; i++)
+		{
+			prev = prev->next;
+		}
+
+		Node* nodeToRemove = prev->next;
+		prev->next = nodeToRemove->next;
+		//删除的是最后一个元素
+		if (index == size_ - 1)
+		{
+			tail = prev;
+		}
+		size_--;
+		E val = nodeToRemove->val;
+		delete nodeToRemove;
+		return val;
+	}
+
+	//查找
+	E getFirst()
+	{
+		if (isEmpty())
+		{
+			throw std::out_of_range("No elements in the list");
+		}
+		return head->next->val;
+	}
+
+	//获取最后一个元素
+	E getLast()
+	{
+		if (isEmpty())
+		{
+			throw std::out_of_range("No elements in the list");
+		}
+
+		return head->next->val;
+	}
+
+	//查找某一个位置的元素
+	E get(int index)
+	{
+		checkElementIndex(index);
+		Node* p = getNode(index);
+		return p->val;
+	}
+
+	//修改元素
+	E set(int index, E element)
+	{
+		checkElementIndex(index);
+		Node* p = getNode(index);
+
+		E oldVal = p->val;
+		p->val = element;
+
+		return oldVal;
+	}
+
+	//其他工具函数
+	int size()
+	{
+		return size_;
+	}
+
+	bool isEmpty()
+	{
+		return size_ == 0;
+	}
+
+private:
+	bool isElementIndex(int index)
+	{
+		return index >= 0 && index < size_;
+	}
+
+	bool isPositionIndex(int index)
+	{
+		return index >= 0 && index <= size_;
+	}
+
+	//检查index索引位置是否可以存在元素
+	void checkElementIndex(int index)
+	{
+		if (!isElementIndex(index))
+		{
+			throw std::out_of_range("Index: " + std::to_string(index) + ",size_: " + std::to_string(size_));
+		}
+
+	}
+
+	//检查index索引位置是否可以插入元素
+	void checkPositionIndex(int index)
+	{
+		if (!isPositionIndex(index))
+		{
+			throw std::out_of_range("Index: " + std::to_string(index) + ",size_:" + std::to_string(size_));
+		}
+	}
+
+
+	//返回index对应的节点
+	//注意要确保输入的index是合法的
+	Node* getNode(int index)
+	{
+		Node* p = head->next;
+		for (int i = 0; i < index; i++)
+		{
+			p = p->next;
+		}
+		return p;
+	}
 
 };
+
+
+void Test_MyLinkedList2(void)
+{
+	MyLinkedList2<int> list;
+	list.addFirst(1);
+	list.addFirst(2);
+	list.addLast(3);
+	list.addLast(4);
+	list.add(2, 5);
+
+	cout << list.removeFirst() << endl; 
+	cout << list.removeLast() << endl; 
+	cout << list.remove(1) << endl; 
+
+	cout << list.getFirst() << endl; 
+	cout << list.getLast() << endl; 
+	cout << list.get(1) << endl; 
+}

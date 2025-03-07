@@ -50,7 +50,9 @@ int main()
 
     //-----------------------------------
     //测试自己实现的双链表
-    Test_MyLinkedList();
+    //Test_MyLinkedList();
+
+    Test_MyLinkedList2();
 
 
 
