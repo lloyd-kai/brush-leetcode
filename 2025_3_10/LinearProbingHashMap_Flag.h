@@ -69,5 +69,143 @@ public:
     }
 
 
-    //to be continued....
+    //删除键值对
+    //如果键值对不存在就返回null
+    void remove(K key)
+    {
+        if (key == K())
+        {
+            throw std::invalid_argument("Key is null");
+        }
+
+        //缩小容量
+        if (size < table.size() / 8)
+        {
+            resize(table.size() / 2);
+        }
+
+        int index = getKeyIndex(key);
+        if (index == -1)
+        {
+            //key不存在,不需要remove
+            return;
+        }
+
+        //开始删除，也就是将其直接替换为占位符
+        table[index] = DUMMY;
+        size--;
+    }
+
+    //查
+    // 返回 key 对应的 val
+    // 如果 key 不存在，则返回 null
+    V get(K key) {
+        if (key == K()) {
+            throw std::invalid_argument("key is null");
+        }
+
+        int index = getKeyIndex(key);
+        if (index == -1) {
+            return V();
+        }
+
+        return table[index]->val;
+    }
+
+    //判断数组中是否包含key
+    bool containsKey(K key) {
+        return getKeyIndex(key) != -1;
+    }
+
+
+    //返回所有的键
+    std::list<K> keys() {
+        std::list<K> keys;
+        for (auto entry : table) {
+            if (entry != nullptr && entry != DUMMY) {
+                keys.push_back(entry->key);
+            }
+        }
+        return keys;
+    }
+
+    int getSize()
+    {
+        return size;
+    }
+
+private:
+    //对key进行线性探查，返回一个索引
+    //根据keys[i] 是否为null判断是否找到对应的key
+    int getKeyIndex(K key)
+    {
+        int step = 0;//记录移动的步数，一旦超过数组的大小就返回-1
+        for (int i = hash(key); table[i] != nullptr; i = (i + 1) % table.size())
+        {
+            step++;
+            //防止死循环
+            if (step > table.size())
+            {
+                //这里可以触发一次resize,把记录为删除的占位符删除
+                resize(table.size());
+                return -1;
+            }
+            
+            KVNode* entry = table[i];
+            //遇到占位符直接跳过
+            if (entry == DUMMY)
+            {
+                continue;
+            }
+            if (entry->val == key)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //哈希函数，将键映射到table的索引中
+    //[0,table.length-1]
+    int hash(K key)
+    {
+        return std::hash<K>{}(key & 0x7fffffff) % table.size();
+    }
+
+    //扩容，缩容函数
+    void resize(int cap)
+    {
+        MyLinearProbingHashMap2<K, V> newCap(cap);
+        for (auto entry : table)
+        {
+            if (entry != nullptr && entry != DUMMY)
+            {
+                newCap.put(entry->key, entry->val);
+            }
+        }
+        this->table = newCap.table;
+    }
 };
+
+void Test_MyLinearProbingHashMap2(void)
+{
+    MyLinearProbingHashMap2<int, int> map;
+    map.put(1, 1);
+    map.put(2, 2);
+    map.put(10, 10);
+    map.put(20, 20);
+    map.put(30, 30);
+    map.put(3, 3);
+    std::cout << map.get(1) << std::endl; // 1
+    std::cout << map.get(2) << std::endl; // 2
+    std::cout << map.get(20) << std::endl; // 20
+
+    map.put(1, 100);
+    std::cout << map.get(1) << std::endl; // 100
+
+    map.remove(20);
+
+    std::cout << map.containsKey(20) << std::endl; // 0 (false)
+    std::cout << map.get(20) << std::endl; // 0 (null)
+    std::cout << map.get(30) << std::endl; // 30
+}
