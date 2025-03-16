@@ -17,6 +17,7 @@ struct TrieNode
 
 //常见的API
 //大部分情况下只需要会用就行了，一般不需要对底层源码如此剖析
+/*
 template <typename V>
 class TrieMap {
 public:
@@ -65,3 +66,4 @@ public:
     // 返回 Map 中键值对的数量
     int size();
 };
+*/
